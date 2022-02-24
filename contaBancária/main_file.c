@@ -3,17 +3,23 @@
 #include "Display_file.h"
 #include "Data_file.h"
 
-main ( ){
-    Dados Lucas;
+int main ( ){
+    FILE * cadastrarCliente( Dados );
+    
+    Dados cliente;
+    FILE *clienteCadastro = cadastrarCliente( cliente );
 
-    if( cadastrarCliente( &Lucas ) ){
-        printf( "\t    CADASTRO REALIZADO!\n"
-                 "\tSeja bem-vindo ao BLACKBANK, %s\n", Lucas.nomePreferencial );
+    if( clienteCadastro != NULL  ){
+        fopen( "arquivoClienteCadastro.dat", "r" );
+        fread( &cliente, sizeof( Dados ), 1, clienteCadastro); 
+        printf( "\n\t    CADASTRO REALIZADO!\n"
+                 "\tSeja bem-vindo ao BLACKBANK, %s\n", cliente.nomePreferencial );
+        
     }
     else{
         printf( "\tOps! Alguma coisa aconteceu!!\n"
                  "Nao conseguimos finalizar o seu cadastro...\n\n");
     }
 
-
+    return 0;
 }

@@ -47,19 +47,22 @@ void limpaDado( char *dado ){
 bool sairConfirma(  ){
     char resposta = '\0';
     do{    
-        printf ( "|----------------| BLACKBANK |----------------|\n"
-                 "|                                             |\n"
-                 "|                                             |\n"
-                 "|                                             |\n"
-                 "|               CONFIRMA SAÍDA?               |\n"
-                 "|                                             |\n"
-                 "|         [1] [ SIM ]     [0] [ NÃO ]         |\n"
-                 "|                                             |\n"
-                 "|                                             |\n"
-                 "|---------------------------------------------|\n"
-                 "-} ");
-        resposta = getchar( ); 
+        printf ( "\n|----------------| BLACKBANK |----------------|\n"
+                   "|                                             |\n"
+                   "|                                             |\n"
+                   "|                                             |\n"
+                   "|               CONFIRMA SAÍDA?               |\n"
+                   "|                                             |\n"
+                   "|         [1] [ SIM ]     [0] [ NÃO ]         |\n"
+                   "|                                             |\n"
+                   "|                                             |\n"
+                   "|---------------------------------------------|\n"
+                   "-} ");
+        resposta = getchar( ); getchar( ); 
     }while( resposta != '1' && resposta != '0' );
     return (resposta == '1' ? true : false );    
 }
+///DEFINIR FUNÇÃO QUE FAZ A LIMPEZA DO BUFFER
+
+
 #endif // UTILITARIAS_H_INCLUDED

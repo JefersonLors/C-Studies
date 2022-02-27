@@ -3,19 +3,14 @@
 
 #include "utilitarias.h"
 
+#define ARQUIVO_CADASTRO_CLIENTE "arquivoClienteCadastro.dat"
 #define TAMANHO_NOME_COMP 61
 #define TAMANHO_NOME_PREF 31
 #define TAMANHO_EMAIL 81
-#define TAMANHO_TELEFONE 15
-/// 7 1 ' ' 9 8 7 8 0 - 1 5 3 5 '\0' 
-/// 0 1  2  3 4 5 6 7 8 9 0 1 2   3    
-#define TAMANHO_CPF 16         
-/// 0 0 0 . 0 0 0 . 0 0 0 - 0 0 '\0'  
-/// 0 1 2 3 4 5 6 7 8 9 0 1 2 3   4    
+#define TAMANHO_TELEFONE 15  
+#define TAMANHO_CPF 16           
 #define TAMANHO_SENHA 10
 #define TAMANHO_RENDA 10
-/// 0 0 / 0 0 / 0 0 0 0 '\0' 
-/// 0 1 2 3 4 5 6 7 8 9   0   
 #define TAMANHO_DATA_NASCIMENTO 12
 
 struct dados{
@@ -27,8 +22,11 @@ struct dados{
          senha[ TAMANHO_SENHA ],
          renda[ TAMANHO_RENDA ],
          nascimento[ TAMANHO_DATA_NASCIMENTO ];
-}clienteDado;
+    int ID;
+};
 typedef struct dados Dados;
+
+int quantidadeDeContas = 0;
 
 FILE *cadastrarCliente( Dados cliente ){
     bool solicitaEmail( Dados* );
@@ -41,31 +39,32 @@ FILE *cadastrarCliente( Dados cliente ){
     bool solicitaData_De_Nascimento( Dados* );
     
     static FILE *arquivoClienteCadastro;
-    static int id = 0;
     
-    if( (arquivoClienteCadastro = fopen( "arquivoClienteCadastro.dat", "a" )) == NULL ){
+    if( (arquivoClienteCadastro = fopen( ARQUIVO_CADASTRO_CLIENTE, "a" )) == NULL ){
         return NULL;
     }else{
-        if( solicitaCpf( &cliente ) ){
-            if( solicitaData_De_Nascimento( &cliente ) ){
-                if( solicitaNomeCompleto( &cliente ) ){
-                    if( solicitaEmail( &cliente ) ){
-                        if( solicitaTelefone( &cliente ) ){
-                            if( solicitaRenda( &cliente ) ){
+        cliente.ID = quantidadeDeContas;
+        //if( solicitaCpf( &cliente ) ){
+            //if( solicitaData_De_Nascimento( &cliente ) ){
+               // if( solicitaNomeCompleto( &cliente ) ){
+                    //if( solicitaEmail( &cliente ) ){
+                        //if( solicitaTelefone( &cliente ) ){
+                            //if( solicitaRenda( &cliente ) ){
                                 if( solicitaNomePreferencial( &cliente ) ){
-                                    if( solicitaSenha( &cliente ) ){
-                                        fseek( arquivoClienteCadastro, id*sizeof( Dados ), SEEK_SET ); 
-                                        fwrite( &cliente, sizeof( Dados ), id++, arquivoClienteCadastro );
+                                    //if( solicitaSenha( &cliente ) ){
+                                        fseek( arquivoClienteCadastro, (cliente.ID)*sizeof(Dados), SEEK_SET ); 
+                                        fwrite( &cliente, sizeof( Dados ), 1, arquivoClienteCadastro );
                                         fclose( arquivoClienteCadastro );
+                                        quantidadeDeContas++;
                                         return arquivoClienteCadastro;
-                                    }else return NULL;
+                                    //}else return NULL;
                                 }else return NULL;
-                            }else return NULL;
-                        }else return NULL;
-                    }else return NULL;
-                }else return NULL;
-            }else return NULL;
-        }else return NULL;
+                            //}else return NULL;
+                        //}else return NULL;
+                   // }else return NULL;
+                //}else return NULL;
+           // }else return NULL;
+        //}else return NULL;
     }
 }
 

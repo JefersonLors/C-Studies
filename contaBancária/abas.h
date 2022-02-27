@@ -5,10 +5,10 @@ void aba( const int, const int );
 
 void aba( const int nivel, const int tela ){
 
-    if ( nivel == 0 )
-        switch ( tela ){
+    if( nivel == 0 )
+        switch( tela ){
             case 0:
-                printf ( "|----------------| BLACKBANK |----------------|\n"
+                printf ( "\n|----------------| BLACKBANK |----------------|\n"
                          "|                                             |\n"
                          "|                                             |\n"
                          "|          [ 1 ] [  ENTRAR   ]                |\n"
@@ -20,14 +20,15 @@ void aba( const int nivel, const int tela ){
                          "|---------------------------------------------|\n"
                          "-} ");
                 break;
+            
         }
-    if ( nivel == 1 )
+    if( nivel == 1 )
         switch ( tela ){
             case 0:
             break;
         }
 
-    if ( nivel == 2 )
+    if( nivel == 2 )
         switch ( tela ){
             case 0:
 

@@ -1,9 +1,9 @@
 #ifndef DISPLAY_FILE_H_INCLUDED
 #define DISPLAY_FILE_H_INCLUDED
 
-void DISPLAY( int, int );
+void DISPLAY( const int, const int );
 
-void DISPLAY( int nivel, int tela ){
+void DISPLAY( const int nivel, const int tela ){
 
     if ( nivel == 0 )
         switch ( tela ){
@@ -13,7 +13,7 @@ void DISPLAY( int nivel, int tela ){
                          "|                                             |"
                          "|          [ 1 ] [  ENTRAR   ]                |"
                          "|          [ 2 ] [ CADASTRAR ]                |"
-                         "|          [ 0 ] [   SAIR    ]                |"
+                         "|          [ 0 ] [   AJUDA   ]                |"
                          "|                                             |"
                          "|                                             |"
                          "|                                             |"

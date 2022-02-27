@@ -1,18 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "Display_file.h"
-#include "Data_file.h"
+#include "cadastro.h"
 
 int main ( ){
     FILE *cadastrarCliente( Dados );
     char resposta[5] = {'\0'};
     enum MENU { ENTRAR = '1', CADASTRAR = '2', AJUDA = '0' };
     do{ 
-        DISPLAY( 0, 0);
+        aba( 0, 0);
         fgets( resposta, 5, stdin );
         if( (sair(resposta)) && (sairConfirma( )) ){
-            exit( EXIT_SUCCESS );
-        }
+            exit( EXIT_SUCCESS );}
     }while( resposta[0] != ENTRAR && resposta[0] != CADASTRAR && resposta[0] != AJUDA );
 
     if( resposta[0] == ENTRAR ){ 

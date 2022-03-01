@@ -62,6 +62,7 @@ bool sairConfirma(  ){
     }while( resposta != '1' && resposta != '0' );
     return (resposta == '1' ? true : false );    
 }
+
 ///DEFINIR FUNÇÃO QUE FAZ A LIMPEZA DO BUFFER
 
 

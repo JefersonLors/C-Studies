@@ -1,38 +1,43 @@
 #include "cadastro.h"
+#include "login.h"
 
 int main( ){
-    FILE *cadastrarCliente( Dados );
+    void cadastrarCliente( Dados );
+    int login( void );
     
-    char resposta[6] = {'\0'};
-    enum MENU { ENTRAR = '1', CADASTRAR = '2', AJUDA = '0' };
-    
-    do{ 
-        aba( 0, 0);
-        fgets( resposta, 6, stdin );
-        limpaDado(resposta);
-        if( (sair(resposta)) && (sairConfirma( )) ){
-            exit( EXIT_SUCCESS );}
-    }while( resposta[0] != ENTRAR && resposta[0] != CADASTRAR && resposta[0] != AJUDA );
+    char resposta = {'\0'};
+    enum MENU { ENTRAR = '1', CADASTRAR = '2', AJUDA = '3', SAIR = '0' };
 
-    if( resposta[0] == ENTRAR ){ 
-        printf( "\n\n\t    NÃO ESTÁ PRONTO!\n");
-    }else if( resposta[0] == CADASTRAR ){
-        Dados cliente;
+    do{
+        do{ 
+            aba( 0, 0);
+            resposta = getchar( ); getchar( );
+        }while( resposta != ENTRAR && resposta != CADASTRAR && resposta != AJUDA && resposta != SAIR );
         
-        FILE *clienteCadastro = cadastrarCliente( cliente );
-        
-        if( clienteCadastro != NULL ){
-            fopen( ARQUIVO_CADASTRO_CLIENTE, "r" );
-            fseek( clienteCadastro, quantidadeDeContas*(sizeof(Dados)), SEEK_SET );
-            fread( &cliente, sizeof( Dados ), 1, clienteCadastro); 
-            printf( "\n\n\t    CADASTRO REALIZADO!\n"
-                     "\tSeja bem-vindo ao BLACKBANK, %s\n", cliente.nomePreferencial ); 
-        }else{
-            printf( "\tOps! Alguma coisa aconteceu!!\n"
-                     "Nao conseguimos finalizar o seu cadastro...\n\n");}
-    }else if( resposta[0] == AJUDA ){
-        printf( "\n--------------------AJUDA--------------------\n"
-                " - DIGITE \"SAIR\" PARA SAIR A QUALQUER MOMENTO.\n" ); }
-    main( );
+        if( resposta == ENTRAR ){ 
+            login();
+        }else if( resposta == CADASTRAR ){
+            cadastrarCliente( cliente );
+            FILE *dadosClienteCadastrado = fopen( ARQUIVO_CADASTRO_CLIENTE, "r" );
+            FILE *dadosGerais = fopen( DADOS_ARQUIVO_CADASTRO, "r" );
+            
+            if( dadosClienteCadastrado == NULL ){
+                puts( "\n\nOps! Cliente não encontrado!\n\n" );
+            }else{ 
+                fscanf( dadosGerais, "%d", &quantidadeDeContas );
+                fseek( dadosClienteCadastrado, (quantidadeDeContas-1)*(sizeof(Dados)), SEEK_SET );
+                fread( &cliente, sizeof( Dados ), 1, dadosClienteCadastrado ); 
+                printf( "\n\n\t    CADASTRO REALIZADO!\n"
+                         "\tSeja bem-vindo ao BLACKBANK, %s\n", cliente.nomePreferencial ); }
+    
+        }else if( resposta == AJUDA ){
+            printf( "\n--------------------AJUDA--------------------\n"
+                    " - DIGITE \"SAIR\" PARA SAIR A QUALQUER MOMENTO.\n\n" ); 
+        }else
+            if( !sairConfirma( ) )
+                resposta = -1;
+    }while( resposta != SAIR );
+    puts( "\n\t\t\tSEE YOU SOON!\n" );
+
     return 0;
 }

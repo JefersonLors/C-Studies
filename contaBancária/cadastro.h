@@ -4,6 +4,9 @@
 #include "utilitarias.h"
 
 #define ARQUIVO_CADASTRO_CLIENTE "arquivoClienteCadastro.dat"
+#define DADOS_ARQUIVO_CADASTRO "dadosArquivoCadastro.txt" 
+
+
 #define TAMANHO_NOME_COMP 61
 #define TAMANHO_NOME_PREF 31
 #define TAMANHO_EMAIL 81
@@ -23,12 +26,12 @@ struct dados{
          renda[ TAMANHO_RENDA ],
          nascimento[ TAMANHO_DATA_NASCIMENTO ];
     int ID;
-};
+}cliente;
 typedef struct dados Dados;
 
-int quantidadeDeContas = 0;
-
-FILE *cadastrarCliente( Dados cliente ){
+int quantidadeDeContas = -1;
+    
+void cadastrarCliente( Dados cliente ){
     bool solicitaEmail( Dados* );
     bool solicitaNomePreferencial( Dados* );
     bool solicitaNomeCompleto( Dados* );
@@ -38,36 +41,40 @@ FILE *cadastrarCliente( Dados cliente ){
     bool solicitaCpf( Dados* );
     bool solicitaData_De_Nascimento( Dados* );
     
-    static FILE *arquivoClienteCadastro;
-    
+    FILE *arquivoClienteCadastro = NULL;
+    FILE *dadosArquivosCadastros = NULL;
+
     if( (arquivoClienteCadastro = fopen( ARQUIVO_CADASTRO_CLIENTE, "a" )) == NULL ){
-        return NULL;
+        puts( "\nMemória não alocada para cliente!\n" );
     }else{
-        cliente.ID = quantidadeDeContas;
-        //if( solicitaCpf( &cliente ) ){
-            //if( solicitaData_De_Nascimento( &cliente ) ){
-               // if( solicitaNomeCompleto( &cliente ) ){
-                    //if( solicitaEmail( &cliente ) ){
-                        //if( solicitaTelefone( &cliente ) ){
-                            //if( solicitaRenda( &cliente ) ){
-                                if( solicitaNomePreferencial( &cliente ) ){
-                                    //if( solicitaSenha( &cliente ) ){
-                                        fseek( arquivoClienteCadastro, (cliente.ID)*sizeof(Dados), SEEK_SET ); 
-                                        fwrite( &cliente, sizeof( Dados ), 1, arquivoClienteCadastro );
-                                        fclose( arquivoClienteCadastro );
-                                        quantidadeDeContas++;
-                                        return arquivoClienteCadastro;
-                                    //}else return NULL;
-                                }else return NULL;
-                            //}else return NULL;
-                        //}else return NULL;
-                   // }else return NULL;
-                //}else return NULL;
-           // }else return NULL;
-        //}else return NULL;
+        if( (dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "a" )) == NULL ){
+            puts( "\nMemória não alocada para dados dos arquivos de cadastros!\n" );
+        }else{ 
+            cliente.ID = ++quantidadeDeContas;
+            fprintf( dadosArquivosCadastros, "%4d", (quantidadeDeContas+1) );
+            if( solicitaCpf( &cliente ) ){
+                if( solicitaData_De_Nascimento( &cliente ) ){
+                    if( solicitaNomeCompleto( &cliente ) ){
+                        if( solicitaEmail( &cliente ) ){
+                            if( solicitaTelefone( &cliente ) ){
+                                if( solicitaRenda( &cliente ) ){
+                                    if( solicitaNomePreferencial( &cliente ) ){
+                                        if( solicitaSenha( &cliente ) ){
+                                            fseek( arquivoClienteCadastro, (cliente.ID)*sizeof(Dados), SEEK_SET ); 
+                                            fwrite( &cliente, sizeof( Dados ), 1, arquivoClienteCadastro );
+                                            fclose( arquivoClienteCadastro );
+                                            fclose( dadosArquivosCadastros );
+                                        }else { }
+                                    }else { }
+                                }else { }
+                            }else { }
+                        }else { }
+                    }else { }
+                }else { }
+            }else { }
+        }
     }
 }
-
 bool solicitaCpf( Dados *cliente ){
     char **validaCpf( char* );
     char **mensagemDeErro = NULL;
@@ -244,7 +251,7 @@ bool solicitaSenha( Dados *cliente ){
                 "   - Pelo menos uma letra maiúscula;\n"
                 "   - Pelo menos uma letra minúscula;\n"
                 "   - Pelo menos um caracter especia;\n"
-                "   - Pelo menos um número;\n\n   -", (TAMANHO_SENHA -2) );
+                "   - Pelo menos um número;\n\n   <- ", (TAMANHO_SENHA -2) );
         fgets( cliente->senha, TAMANHO_SENHA, stdin );
         limpaDado( cliente->senha );
         if( sair(cliente->senha) && (sairConfirma(  )) ){
@@ -348,7 +355,6 @@ char *validaRenda( char *renda ){
             erro = NULL;}}
     return erro;
 }
-
 #endif // CADASTRO_H_INCLUDED
 
 

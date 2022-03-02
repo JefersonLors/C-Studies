@@ -3,10 +3,11 @@
 
 #include "utilitarias.h"
 
+///CONSTANTES DE ARQUIVOS
 #define ARQUIVO_CADASTRO_CLIENTE "arquivoClienteCadastro.dat"
 #define DADOS_ARQUIVO_CADASTRO "dadosArquivoCadastro.txt" 
 
-
+///CONSTANTES DE REGISTROS
 #define TAMANHO_NOME_COMP 61
 #define TAMANHO_NOME_PREF 31
 #define TAMANHO_EMAIL 81
@@ -31,7 +32,7 @@ typedef struct dados Dados;
 
 int quantidadeDeContas = -1;
     
-void cadastrarCliente( Dados cliente ){
+bool cadastrarCliente( Dados cliente ){ 
     bool solicitaEmail( Dados* );
     bool solicitaNomePreferencial( Dados* );
     bool solicitaNomeCompleto( Dados* );
@@ -41,39 +42,39 @@ void cadastrarCliente( Dados cliente ){
     bool solicitaCpf( Dados* );
     bool solicitaData_De_Nascimento( Dados* );
     
-    FILE *arquivoClienteCadastro = NULL;
-    FILE *dadosArquivosCadastros = NULL;
+    FILE *arquivoClienteCadastro = fopen( ARQUIVO_CADASTRO_CLIENTE, "a" );
+    FILE *dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "a" );
 
-    if( (arquivoClienteCadastro = fopen( ARQUIVO_CADASTRO_CLIENTE, "a" )) == NULL ){
-        puts( "\nMemória não alocada para cliente!\n" );
+    if( arquivoClienteCadastro == NULL && dadosArquivosCadastros == NULL ){
+        puts( "\n Arquivo não criado para registros!\n" );
+        return false;
     }else{
-        if( (dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "a" )) == NULL ){
-            puts( "\nMemória não alocada para dados dos arquivos de cadastros!\n" );
-        }else{ 
-            cliente.ID = ++quantidadeDeContas;
-            fprintf( dadosArquivosCadastros, "%4d", (quantidadeDeContas+1) );
-            if( solicitaCpf( &cliente ) ){
-                if( solicitaData_De_Nascimento( &cliente ) ){
-                    if( solicitaNomeCompleto( &cliente ) ){
-                        if( solicitaEmail( &cliente ) ){
-                            if( solicitaTelefone( &cliente ) ){
-                                if( solicitaRenda( &cliente ) ){
-                                    if( solicitaNomePreferencial( &cliente ) ){
-                                        if( solicitaSenha( &cliente ) ){
-                                            fseek( arquivoClienteCadastro, (cliente.ID)*sizeof(Dados), SEEK_SET ); 
-                                            fwrite( &cliente, sizeof( Dados ), 1, arquivoClienteCadastro );
-                                            fclose( arquivoClienteCadastro );
-                                            fclose( dadosArquivosCadastros );
-                                        }else { }
-                                    }else { }
-                                }else { }
-                            }else { }
-                        }else { }
-                    }else { }
-                }else { }
-            }else { }
-        }
-    }
+        fscanf( dadosArquivosCadastros, "%4d", &quantidadeDeContas );
+        fclose( dadosArquivosCadastros );
+        cliente.ID = ++quantidadeDeContas;
+        dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "w" );
+        fprintf( dadosArquivosCadastros, "%3d", quantidadeDeContas );
+        fclose( dadosArquivosCadastros );
+        
+        if( solicitaCpf( &cliente ) )
+            if( solicitaData_De_Nascimento( &cliente ) )
+                if( solicitaNomeCompleto( &cliente ) )
+                    if( solicitaEmail( &cliente ) )
+                        if( solicitaTelefone( &cliente ) )
+                            if( solicitaRenda( &cliente ) )
+                                if( solicitaNomePreferencial( &cliente ) )
+                                    if( solicitaSenha( &cliente ) ){
+                                        fseek( arquivoClienteCadastro, (cliente.ID)*sizeof(Dados), SEEK_SET ); 
+                                        fwrite( &cliente, sizeof(Dados), 1, arquivoClienteCadastro );
+                                        fclose( arquivoClienteCadastro );   
+                                        return true;}}
+        
+        ///adicionar fução que conta os cpfs e checar se bate com a quantidade de contas criadas
+        --quantidadeDeContas; 
+        dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "w" );
+        fprintf( dadosArquivosCadastros, "%3d", quantidadeDeContas );
+        fclose( dadosArquivosCadastros );
+        return false;
 }
 bool solicitaCpf( Dados *cliente ){
     char **validaCpf( char* );
@@ -83,8 +84,12 @@ bool solicitaCpf( Dados *cliente ){
         printf("\n-> Insira seu CPF [xxx.xxx.xxx-xx]\n   <- ");
         fgets( cliente->cpf, TAMANHO_CPF, stdin );
         limpaDado( cliente->cpf );
-        if( sair(cliente->cpf) && (sairConfirma(  )) ){
-            return false;
+        if( sair(cliente->cpf) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{
+                char *vazio[1] = {" "};
+                mensagemDeErro = vazio;}
         }else{
             mensagemDeErro = validaCpf( cliente->cpf );
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
@@ -117,8 +122,12 @@ bool solicitaData_De_Nascimento( Dados *cliente ){
         printf("\n-> Insira sua data de nascimento [dd/mm/aaaa]\n   <- ");
         fgets( cliente->nascimento, TAMANHO_DATA_NASCIMENTO, stdin );
         limpaDado( cliente->nascimento );
-        if( sair(cliente->nascimento) && (sairConfirma(  )) ){ 
-            return false;
+        if( sair(cliente->nascimento) ){ 
+            if( sairConfirma(  ) ){
+                return false;
+            }else{
+                char *vazio[1] = {" "};
+                mensagemDeErro = vazio;}
         }else{ 
             mensagemDeErro = validaData_De_Nascimento( cliente->nascimento );
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
@@ -161,8 +170,10 @@ bool solicitaNomeCompleto( Dados *cliente ){
         printf("\n-> Insira seu nome completo (MÁX %d carac.)\n   <- ", (TAMANHO_NOME_COMP - 1));
         fgets( cliente->nomeCompleto, TAMANHO_NOME_COMP, stdin );
         limpaDado( cliente->nomeCompleto );
-        if( sair( cliente->nomeCompleto ) && (sairConfirma(  )) ){
-            return false;
+        if( sair( cliente->nomeCompleto ) ){
+            if( sairConfirma(  ) ){
+                return false; 
+            }else{ mensagemDeErro = " ";}
         }else{
             mensagemDeErro = validaNomes( cliente->nomeCompleto );
             if( mensagemDeErro != NULL ){
@@ -178,8 +189,10 @@ bool solicitaNomePreferencial( Dados *cliente ){
         printf("\n-> Insira seu nome preferencial (MÁX %d carac.)\n   <- ", (TAMANHO_NOME_PREF - 1) );
         fgets( cliente->nomePreferencial, TAMANHO_NOME_PREF, stdin );
         limpaDado( cliente->nomePreferencial );
-        if( sair(cliente->nomePreferencial) && (sairConfirma(  )) ){
-            return false;
+        if( sair(cliente->nomePreferencial) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{ mensagemDeErro = " ";}
         }else{
             mensagemDeErro = validaNomes( cliente->nomePreferencial );
             if( mensagemDeErro != NULL ){
@@ -204,8 +217,12 @@ bool solicitaEmail( Dados *cliente ){
         printf("\n-> Insira seu melhor e-mail [fulano@gmail.com - MÁX %d carac.]\n   <- ", (TAMANHO_EMAIL - 1) );
         fgets( cliente->email, TAMANHO_EMAIL, stdin );
         limpaDado( cliente->email );
-        if( sair( cliente->email) && (sairConfirma(  )) ){
-            return false;
+        if( sair( cliente->email) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{
+                char *vazio[1] = {" "};
+                mensagemDeErro = vazio;}
         }else{ 
             mensagemDeErro = validaEmail( cliente->email );
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
@@ -254,8 +271,12 @@ bool solicitaSenha( Dados *cliente ){
                 "   - Pelo menos um número;\n\n   <- ", (TAMANHO_SENHA -2) );
         fgets( cliente->senha, TAMANHO_SENHA, stdin );
         limpaDado( cliente->senha );
-        if( sair(cliente->senha) && (sairConfirma(  )) ){
-            return false;
+        if( sair(cliente->senha) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{
+                char *vazio[1] = {" "};
+                mensagemDeErro = vazio;}
         }else{
             mensagemDeErro = validaSenha( cliente->senha);
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
@@ -269,25 +290,28 @@ char **validaSenha( char *senha ){
 
     for( int digito = 0; senha[digito] != '\0'; digito++ ){
         if( (islower(senha[digito]) > 0 ) ){
-            for( int digito = 0; senha[digito] != '\0'; digito++ ){
-                if( (isupper(senha[digito]) > 0) ){
-                    for( int digito = 0; senha[digito] != '\0'; digito++ ){
-                        if( (isdigit(senha[digito]) > 0) ){
-                            for( int digito = 0; senha[digito] != '\0'; digito++ ){
-                                if( (isalnum(senha[digito] )) == 0 ){
-                                    mensagem[erro++] = NULL;
-                                }else if( senha[digito+1] == '\0'){
-                                    mensagem[erro++] = "\t^ Falta pelo menos um caracter especial!";}}
-                            break;
-                        }else if( senha[digito+1] == '\0'){
-                            mensagem[erro++] = "\t^ Falta pelo menos um número!";}}
-                    break;
-                }else if( senha[digito+1] == '\0'){
-                    mensagem[erro++] = "\t^ Falta pelo menos uma letra MAIÚSCULA!";}}
             break;
         }else if( senha[digito+1] == '\0'){
-            mensagem[erro++] = "\t^ Falta pelo menos uma letra minúscula!";}
-    }
+            mensagem[erro++] = "\t^ Falta pelo menos uma letra minúscula!";} }
+    
+    for( int digito = 0; senha[digito] != '\0'; digito++ ){
+        if( (isupper(senha[digito]) > 0) ){
+            break;
+        }else if( senha[digito+1] == '\0'){
+            mensagem[erro++] = "\t^ Falta pelo menos uma letra MAIÚSCULA!";} }
+    
+    for( int digito = 0; senha[digito] != '\0'; digito++ ){
+        if( (isdigit(senha[digito]) > 0) ){
+            break;
+        }else if( senha[digito+1] == '\0'){
+            mensagem[erro++] = "\t^ Falta pelo menos um número!";} }
+    
+    for( int digito = 0; senha[digito] != '\0'; digito++ ){
+        if( (isalnum(senha[digito] )) == 0 ){
+            break;
+        }else if( senha[digito+1] == '\0'){
+            mensagem[erro++] = "\t^ Falta pelo menos um caracter especial!";} }
+    
     mensagem[erro] = NULL;
     return mensagem;
 }
@@ -299,8 +323,12 @@ bool solicitaTelefone( Dados *cliente ){
         printf("\n-> Insira seu telefone [xx xxxxx-xxxx]\n   <- ");
         fgets( cliente->telefone, TAMANHO_TELEFONE, stdin );
         limpaDado( cliente->telefone );
-        if( sair(cliente->telefone) && (sairConfirma(  )) ){
-            return false;
+        if( sair(cliente->telefone) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{
+                char *vazio[1] = {" "};
+                mensagemDeErro = vazio;}
         }else{
             mensagemDeErro = validaTelefone( cliente->telefone );
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
@@ -335,8 +363,10 @@ bool solicitaRenda( Dados *cliente ){
         printf("\n-> Insira sua renda mensal [R$ 1234 - MÁX %d carac.]\n   <- R$ ", (TAMANHO_RENDA -1) );
         fgets( cliente->renda, TAMANHO_RENDA, stdin );
         limpaDado( cliente->renda );
-        if( sair(cliente->renda) && (sairConfirma(  )) ){
-            return false;
+        if( sair(cliente->renda) ){
+            if( sairConfirma(  ) ){
+                return false;
+            }else{ mensagemDeErro = " ";}
         }else{
             mensagemDeErro = validaRenda( cliente->renda );
             if( mensagemDeErro != NULL ){

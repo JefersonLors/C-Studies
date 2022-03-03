@@ -69,7 +69,8 @@ bool cadastrarCliente( Dados cliente ){
                                         fclose( arquivoClienteCadastro );   
                                         return true;}}
         
-        ///adicionar fução que conta os cpfs e checar se bate com a quantidade de contas criadas
+///adicionar fução que conta os cpfs e checar se bate com a quantidade de contas criadas porque está
+///dando erro
         --quantidadeDeContas; 
         dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "w" );
         fprintf( dadosArquivosCadastros, "%3d", quantidadeDeContas );
@@ -81,7 +82,7 @@ bool solicitaCpf( Dados *cliente ){
     char **mensagemDeErro = NULL;
 
     do{
-        printf("\n-> Insira seu CPF [xxx.xxx.xxx-xx]\n   <- ");
+        abasCadastro(1);
         fgets( cliente->cpf, TAMANHO_CPF, stdin );
         limpaDado( cliente->cpf );
         if( sair(cliente->cpf) ){
@@ -102,14 +103,15 @@ char **validaCpf( char *cpf ){
     static char *mensagem[3] = {NULL};
     int erro = 0; 
  
-    ///incluir funcao de busca no banco de dados se o email já encontra-se cadastrado
+    ///incluir funcao de busca no banco de dados se o cpf já encontra-se cadastrado
+    ///a dualidade de cpfs cadastrados está causando erro de login, pois são dois cpfs com senhas diferentes.
     if( !(validaTamanho(cpf, TAMANHO_CPF)) ){
         mensagem[erro++] = "\t^ Dado incompleto"; }
     if( !(cpf[3] == '.') || !(cpf[7] == '.') || !(cpf[11] == '-') ){
-        mensagem[erro++] = "\t^ Formato invalido!";}
+        mensagem[erro++] = "\t^ Formato invalido";}
     for( int digito = 0; cpf[digito] != '\0'; digito++ ){
         if( (isdigit( cpf[digito] )) == 0 && cpf[digito] != '.' && cpf[digito] != '-' ){
-            mensagem[erro++] = "\t^ Utilize apenas numeros!";
+            mensagem[erro++] = "\t^ Utilize apenas numeros";
             break;}}
     mensagem[erro] = NULL;
     return mensagem;
@@ -119,7 +121,7 @@ bool solicitaData_De_Nascimento( Dados *cliente ){
     char **mensagemDeErro = NULL;
 
     do{
-        printf("\n-> Insira sua data de nascimento [dd/mm/aaaa]\n   <- ");
+        abasCadastro(7);
         fgets( cliente->nascimento, TAMANHO_DATA_NASCIMENTO, stdin );
         limpaDado( cliente->nascimento );
         if( sair(cliente->nascimento) ){ 
@@ -143,22 +145,22 @@ char **validaData_De_Nascimento( char *data ){
     if( !(validaTamanho(data, TAMANHO_DATA_NASCIMENTO)) ){
         mensagem[erro++] = "\t^ Dado incompleto";}
     if( !(data[2] == '/') || !(data[5] == '/') ){
-        mensagem[erro++] = "\t^ Formato invalido!";}
+        mensagem[erro++] = "\t^ Formato invalido";}
     for( int digito = 0; data[digito] != '\0'; digito++ ){
         if( (isdigit( data[digito] )) == 0 && data[digito] != '/' ){
             mensagem[erro++] = "\t^ Utilize apenas numeros!";
             break;}}
     if( mensagem[0] == NULL ){
         if( (data[0] > '3') || (data[0] == '3' && data[1] > '1') || ((data[0] == '0') && (data[1] == '0')) ) {
-            mensagem[erro++] = "\t^ Dia inválido!";}
+            mensagem[erro++] = "\t^ Dia inválido";}
         if( (data[3] > '1') || (data[3] == '1' && data[4] > '2') || ((data[3] == '0') && (data[4] == '0')) ){
-            mensagem[erro++] = "\t^ Mês inválido!";}
+            mensagem[erro++] = "\t^ Mês inválido";}
         if( (data[6] > '2') || (data[8] == '2' && data[9] > '2') || ((data[6] == '2') && (data[7] > '0')) || ((data[7] == '0') && (data[8] > '2')) ){
-            mensagem[erro++] = "\t^ Ano inválido!";}
+            mensagem[erro++] = "\t^ Ano inválido";}
         if( (data[6] < '1') || (data[6] == '1' && data[7] < '9') ){
-            mensagem[erro++] = "\t^ Ano inválido!";}}
+            mensagem[erro++] = "\t^ Ano inválido";}}
     if( mensagem[0] == NULL && (data[6] == '2') && (data[0] == '0') && (data[9] > '4') ){
-        mensagem[erro++] = "\t^ Ops!! Você não tem idade para fazer o cadastro!";}
+        mensagem[erro++] = "\t^ Ops!! Você não tem idade para fazer o cadastro.";}
     mensagem[erro] = NULL;
     return mensagem;
 }
@@ -167,7 +169,7 @@ bool solicitaNomeCompleto( Dados *cliente ){
     char *mensagemDeErro = NULL;
     
     do{
-        printf("\n-> Insira seu nome completo (MÁX %d carac.)\n   <- ", (TAMANHO_NOME_COMP - 1));
+        abasCadastro(3);
         fgets( cliente->nomeCompleto, TAMANHO_NOME_COMP, stdin );
         limpaDado( cliente->nomeCompleto );
         if( sair( cliente->nomeCompleto ) ){
@@ -186,7 +188,7 @@ bool solicitaNomePreferencial( Dados *cliente ){
     char *mensagemDeErro = NULL;
     
     do{
-        printf("\n-> Insira seu nome preferencial (MÁX %d carac.)\n   <- ", (TAMANHO_NOME_PREF - 1) );
+        abasCadastro(4);
         fgets( cliente->nomePreferencial, TAMANHO_NOME_PREF, stdin );
         limpaDado( cliente->nomePreferencial );
         if( sair(cliente->nomePreferencial) ){
@@ -205,7 +207,7 @@ char *validaNomes( char *nome ){
 
     for( int letra = 0; nome[letra] != '\0'; letra++ ){
         if( ( isalpha( nome[letra] ) == 0) && (nome[letra] != '\n') && (nome[letra] != ' ') ){
-            erro = "\t^ Utilize apenas letras!";
+            erro = "\t^ Utilize apenas letras";
             break;}
         erro = NULL;}
 }
@@ -214,7 +216,7 @@ bool solicitaEmail( Dados *cliente ){
     char **mensagemDeErro = NULL;
     
     do{
-        printf("\n-> Insira seu melhor e-mail [fulano@gmail.com - MÁX %d carac.]\n   <- ", (TAMANHO_EMAIL - 1) );
+        abasCadastro(5);
         fgets( cliente->email, TAMANHO_EMAIL, stdin );
         limpaDado( cliente->email );
         if( sair( cliente->email) ){
@@ -241,21 +243,21 @@ char **validaEmail( char *email  ){
     strcpy( email, (padronizaDado(email)));
     for( int caracter = 0; email[caracter] != '\0'; caracter++ ){
         if( (isalnum( email[caracter] )) == 0 && email[caracter] != '.' && email[caracter] != '_' && email[caracter] != '@' ){
-            mensagem[erro++] = "\t^ Email inválido! Utilize caracteres de A - Z, \nde 0 - 9, ( _ ), ( . ), sem espaço, sem acentuação \ne sem caracteres especiais além dos já citados!";
+            mensagem[erro++] = "\t^ Email inválido! Utilize caracteres de A - Z, \nde 0 - 9, ( _ ), ( . ), sem espaço, sem acentuação \ne sem caracteres especiais além dos já citados";
             break;}}
 
     for( int caracter = 0; email[caracter] != '\0'; caracter++ ){
         if( email[caracter] == '@' ){
             if( caracter < tamanhoMin ){
-                mensagem[erro++] = "\t^ É necessário pelo menos 5 caracteres de endereço!";}
+                mensagem[erro++] = "\t^ É necessário pelo menos 5 caracteres de endereço";}
             for( int dominio = 0; dominio < quantidadeDominios; dominio++ ){
                 if( (strcmp( &email[caracter], dominios[dominio] )) == 0 ){
                     mensagem[erro++] = NULL; break;
                 }else if( (dominio+1) == quantidadeDominios ){
-                    mensagem[erro++] = "\t^ Dominio inválido!";}}
+                    mensagem[erro++] = "\t^ Dominio inválido";}}
             break;
         }else if( email[caracter+1] == '\0' ){
-            mensagem[erro++] = "\t^ Email inválido!";}}
+            mensagem[erro++] = "\t^ Email inválido";}}
     mensagem[erro] = NULL;
     return mensagem;
 }
@@ -264,11 +266,7 @@ bool solicitaSenha( Dados *cliente ){
     char **mensagemDeErro = NULL;
     
     do{
-        printf( "\n-> Crie uma senha segura de até %d caracteres [jw3h_7Da]\n"
-                "   - Pelo menos uma letra maiúscula;\n"
-                "   - Pelo menos uma letra minúscula;\n"
-                "   - Pelo menos um caracter especia;\n"
-                "   - Pelo menos um número;\n\n   <- ", (TAMANHO_SENHA -2) );
+        abasCadastro(2);
         fgets( cliente->senha, TAMANHO_SENHA, stdin );
         limpaDado( cliente->senha );
         if( sair(cliente->senha) ){
@@ -292,25 +290,25 @@ char **validaSenha( char *senha ){
         if( (islower(senha[digito]) > 0 ) ){
             break;
         }else if( senha[digito+1] == '\0'){
-            mensagem[erro++] = "\t^ Falta pelo menos uma letra minúscula!";} }
+            mensagem[erro++] = "\t^ Falta pelo menos uma letra minúscula";} }
     
     for( int digito = 0; senha[digito] != '\0'; digito++ ){
         if( (isupper(senha[digito]) > 0) ){
             break;
         }else if( senha[digito+1] == '\0'){
-            mensagem[erro++] = "\t^ Falta pelo menos uma letra MAIÚSCULA!";} }
+            mensagem[erro++] = "\t^ Falta pelo menos uma letra MAIÚSCULA";} }
     
     for( int digito = 0; senha[digito] != '\0'; digito++ ){
         if( (isdigit(senha[digito]) > 0) ){
             break;
         }else if( senha[digito+1] == '\0'){
-            mensagem[erro++] = "\t^ Falta pelo menos um número!";} }
+            mensagem[erro++] = "\t^ Falta pelo menos um número";} }
     
     for( int digito = 0; senha[digito] != '\0'; digito++ ){
         if( (isalnum(senha[digito] )) == 0 ){
             break;
         }else if( senha[digito+1] == '\0'){
-            mensagem[erro++] = "\t^ Falta pelo menos um caracter especial!";} }
+            mensagem[erro++] = "\t^ Falta pelo menos um caracter especial";} }
     
     mensagem[erro] = NULL;
     return mensagem;
@@ -320,7 +318,7 @@ bool solicitaTelefone( Dados *cliente ){
     char **mensagemDeErro = NULL;
     
     do{
-        printf("\n-> Insira seu telefone [xx xxxxx-xxxx]\n   <- ");
+        abasCadastro(8);
         fgets( cliente->telefone, TAMANHO_TELEFONE, stdin );
         limpaDado( cliente->telefone );
         if( sair(cliente->telefone) ){
@@ -342,16 +340,16 @@ char **validaTelefone( char *telefone  ){
     ///incluir funcao de busca no banco de dados se o telefone já encontra-se cadastrado
 
     if( !(validaTamanho(telefone, TAMANHO_TELEFONE)) ){
-        mensagem[erro++] = "\t^ Dado incompleto!";}
+        mensagem[erro++] = "\t^ Dado incompleto";}
     if( !(telefone[2] == ' ') || !(telefone[8] == '-') ){
-        mensagem[erro++] = "\t^ Formato inválido!";}
+        mensagem[erro++] = "\t^ Formato inválido";}
     if( (telefone[2] == ' ') && !(telefone[3] == '9') ){
-        mensagem[erro++] = "\t^ Inclua o 9!";}
+        mensagem[erro++] = "\t^ Inclua o 9";}
     if( !(telefone[0] != '0') && !(telefone[1] == '0') ){
-        mensagem[erro++] = "\t^ DDD inválido!";}
+        mensagem[erro++] = "\t^ DDD inválido";}
     for( int digito = 0; telefone[digito] != '\0'; digito++ ){
         if( (isdigit(telefone[digito])) == 0 && telefone[digito] != '\n' && telefone[digito] != ' ' && telefone[digito] != '-'  ){
-            mensagem[erro++] = "\t^ Utilize apenas números!"; break;}}
+            mensagem[erro++] = "\t^ Utilize apenas números"; break;}}
     mensagem[erro] = NULL;
     return mensagem;
 }
@@ -360,7 +358,7 @@ bool solicitaRenda( Dados *cliente ){
     char *mensagemDeErro = NULL;
     
     do{
-        printf("\n-> Insira sua renda mensal [R$ 1234 - MÁX %d carac.]\n   <- R$ ", (TAMANHO_RENDA -1) );
+        abasCadastro(6);
         fgets( cliente->renda, TAMANHO_RENDA, stdin );
         limpaDado( cliente->renda );
         if( sair(cliente->renda) ){
@@ -379,7 +377,7 @@ char *validaRenda( char *renda ){
 
     for( int digito = 0; renda[digito] != '\0'; digito++ ){
         if( (isdigit(renda[digito])) == 0 ){
-            erro = "\t^ Utilize apenas números!";
+            erro = "\t^ Utilize apenas números";
             break;
         }else if( renda[digito+1] == '\0' ){ 
             erro = NULL;}}

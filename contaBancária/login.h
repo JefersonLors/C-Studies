@@ -56,7 +56,7 @@ char *solicitaCpfLogin( ){
     static char cpfTemp[TAMANHO_CPF] = { };
     
     do{
-        printf("\n-> Insira seu CPF [xxx.xxx.xxx-xx]\n   <- ");
+        abasLogin(1);
         fgets( cpfTemp, TAMANHO_CPF, stdin );
         limpaDado( cpfTemp );
         if( sair(cpfTemp) ){
@@ -87,7 +87,7 @@ char **validaCpfLogin( char *cpf ){
 char *solicitaSenhaLogin(  ){
     static char senhaTemp[TAMANHO_SENHA] = { };
 
-    printf( "\n-> Insira sua senha\n   <- " );
+    abasLogin(2);
     fgets( senhaTemp, TAMANHO_SENHA, stdin );
     limpaDado( senhaTemp );
     if( sair(senhaTemp) ){

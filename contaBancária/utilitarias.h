@@ -47,17 +47,7 @@ void limpaDado( char *dado ){
 bool sairConfirma(  ){
     char resposta = '\0';
     do{    
-        printf ( "\n|----------------| BLACKBANK |----------------|\n"
-                   "|                                             |\n"
-                   "|                                             |\n"
-                   "|                                             |\n"
-                   "|               CONFIRMA SAÍDA?               |\n"
-                   "|                                             |\n"
-                   "|         [1] [ SIM ]     [0] [ NÃO ]         |\n"
-                   "|                                             |\n"
-                   "|                                             |\n"
-                   "|---------------------------------------------|\n"
-                   "-} ");
+        abaConfirmaSaida( );
         resposta = getchar( ); getchar( ); 
     }while( resposta != '1' && resposta != '0' );
     return (resposta == '1' ? true : false );    

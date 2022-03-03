@@ -10,7 +10,7 @@ int main( ){
 
     do{
         do{ 
-            aba( 0, 0);
+            menus(1);
             resposta = getchar( ); getchar( );
         }while( resposta != ENTRAR && resposta != CADASTRAR && resposta != AJUDA && resposta != SAIR );
         
@@ -49,7 +49,7 @@ int main( ){
             if( !sairConfirma( ) )
                 resposta = -1;
     }while( resposta != SAIR );
-    puts( "\n\t\t\tSEE YOU SOON!\n" );
+    puts( "\n\t\t\t\tSEE YOU SOON!\n" );
 
     return 0;
 }

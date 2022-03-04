@@ -12,6 +12,8 @@ int main( ){
         do{ 
             menus(1);
             resposta = getchar( ); getchar( );
+            if( resposta != ENTRAR && resposta != CADASTRAR && resposta != AJUDA && resposta != SAIR ){ 
+                puts( "\t^ Escolha uma opção válida");}
         }while( resposta != ENTRAR && resposta != CADASTRAR && resposta != AJUDA && resposta != SAIR );
         
         if( resposta == ENTRAR ){ 

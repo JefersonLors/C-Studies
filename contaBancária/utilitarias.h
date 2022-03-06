@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "abas.h"
+#include "cadastro.h"
 
 #define bool _Bool
 #define true 1

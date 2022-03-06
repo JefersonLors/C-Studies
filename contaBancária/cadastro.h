@@ -6,6 +6,7 @@
 ///CONSTANTES DE ARQUIVOS
 #define ARQUIVO_CADASTRO_CLIENTE "arquivoClienteCadastro.dat"
 #define DADOS_ARQUIVO_CADASTRO "dadosArquivoCadastro.txt" 
+///--------------------------------------///
 
 ///CONSTANTES DE REGISTROS
 #define TAMANHO_NOME_COMP 61
@@ -16,6 +17,12 @@
 #define TAMANHO_SENHA 10
 #define TAMANHO_RENDA 10
 #define TAMANHO_DATA_NASCIMENTO 12
+///--------------------------------------///
+
+///CONSULTAS;
+bool consultaCpf( const char* );
+bool consultaEmail( const char* );
+bool consultaTelefone( const char* );
 
 struct dados{
     char nomeCompleto[ TAMANHO_NOME_COMP ],
@@ -30,18 +37,33 @@ struct dados{
 }cliente;
 typedef struct dados Dados;
 
+enum SITUACAO_DO_DADO { CADASTRADO = 1, NOVO = 0};
+typedef enum SITUACAO_DO_DADO SITUACAO_DO_DADO; 
+
 int quantidadeDeContas = -1;
-    
+
+///FUNÇÕES DE VALIDAÇÃO
+char **validaCpf( const char* );
+char *validaNomes( const char* );
+char **validaData_De_Nascimento( const char* );
+char **validaEmail( char* );
+char **validaSenha( const char* );
+char **validaTelefone( const char* );
+char *validaRenda( const char* );
+///--------------------------------------///
+
+///FUNÇÕES DE SOLICITAÇÃO
+bool solicitaEmail( Dados* );
+bool solicitaNomePreferencial( Dados* );
+bool solicitaNomeCompleto( Dados* );
+bool solicitaTelefone( Dados* );
+bool solicitaRenda( Dados* );
+bool solicitaSenha( Dados* );
+bool solicitaCpf( Dados* );
+bool solicitaData_De_Nascimento( Dados* );
+///--------------------------------------///
+
 bool cadastrarCliente( Dados cliente ){ 
-    bool solicitaEmail( Dados* );
-    bool solicitaNomePreferencial( Dados* );
-    bool solicitaNomeCompleto( Dados* );
-    bool solicitaTelefone( Dados* );
-    bool solicitaRenda( Dados* );
-    bool solicitaSenha( Dados* );
-    bool solicitaCpf( Dados* );
-    bool solicitaData_De_Nascimento( Dados* );
-    
     FILE *arquivoClienteCadastro = fopen( ARQUIVO_CADASTRO_CLIENTE, "a" );
     FILE *dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "a" );
 
@@ -71,14 +93,13 @@ bool cadastrarCliente( Dados cliente ){
         
 ///adicionar fução que conta os cpfs e checar se bate com a quantidade de contas criadas porque está
 ///dando erro
-        --quantidadeDeContas; 
-        dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "w" );
-        fprintf( dadosArquivosCadastros, "%3d", quantidadeDeContas );
-        fclose( dadosArquivosCadastros );
-        return false;
+    --quantidadeDeContas; 
+    dadosArquivosCadastros = fopen( DADOS_ARQUIVO_CADASTRO, "w" );
+    fprintf( dadosArquivosCadastros, "%3d", quantidadeDeContas );
+    fclose( dadosArquivosCadastros );
+    return false;
 }
 bool solicitaCpf( Dados *cliente ){
-    char **validaCpf( char* );
     char **mensagemDeErro = NULL;
 
     do{
@@ -96,15 +117,13 @@ bool solicitaCpf( Dados *cliente ){
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
                 puts(mensagemDeErro[corredor]);}}
     }while( mensagemDeErro[0] != NULL );
-
     return true;
 }
-char **validaCpf( char *cpf ){
+char **validaCpf( const char *cpf ){
     static char *mensagem[3] = {NULL};
+    SITUACAO_DO_DADO CPF = NOVO;
     int erro = 0; 
  
-    ///incluir funcao de busca no banco de dados se o cpf já encontra-se cadastrado
-    ///a dualidade de cpfs cadastrados está causando erro de login, pois são dois cpfs com senhas diferentes.
     if( !(validaTamanho(cpf, TAMANHO_CPF)) ){
         mensagem[erro++] = "\t^ Dado incompleto"; }
     if( !(cpf[3] == '.') || !(cpf[7] == '.') || !(cpf[11] == '-') ){
@@ -113,11 +132,18 @@ char **validaCpf( char *cpf ){
         if( (isdigit( cpf[digito] )) == 0 && cpf[digito] != '.' && cpf[digito] != '-' ){
             mensagem[erro++] = "\t^ Utilize apenas numeros";
             break;}}
+
     mensagem[erro] = NULL;
+
+    if( mensagem[0] == NULL ){
+        CPF = consultaCpf( cpf );
+        if( CPF == CADASTRADO ){
+            mensagem[erro++] = "\t^ Cpf já cadastrado";
+            mensagem[erro] = NULL;}}
+    
     return mensagem;
 }
 bool solicitaData_De_Nascimento( Dados *cliente ){
-    char **validaData_De_Nascimento( char* );
     char **mensagemDeErro = NULL;
 
     do{
@@ -138,7 +164,7 @@ bool solicitaData_De_Nascimento( Dados *cliente ){
 
     return true;
 }
-char **validaData_De_Nascimento( char *data ){
+char **validaData_De_Nascimento( const char *data ){
     static char *mensagem[7] = {NULL};
     int erro = 0;
 
@@ -165,7 +191,6 @@ char **validaData_De_Nascimento( char *data ){
     return mensagem;
 }
 bool solicitaNomeCompleto( Dados *cliente ){
-    char *validaNomes( char* );
     char *mensagemDeErro = NULL;
     
     do{
@@ -184,7 +209,6 @@ bool solicitaNomeCompleto( Dados *cliente ){
     return true;
 }
 bool solicitaNomePreferencial( Dados *cliente ){
-    char *validaNomes( char* );
     char *mensagemDeErro = NULL;
     
     do{
@@ -202,7 +226,7 @@ bool solicitaNomePreferencial( Dados *cliente ){
     }while( mensagemDeErro != NULL);
     return true;
 }
-char *validaNomes( char *nome ){
+char *validaNomes( const char *nome ){
     static char *erro = NULL;
 
     for( int letra = 0; nome[letra] != '\0'; letra++ ){
@@ -212,7 +236,6 @@ char *validaNomes( char *nome ){
         erro = NULL;}
 }
 bool solicitaEmail( Dados *cliente ){
-    char **validaEmail( char* );
     char **mensagemDeErro = NULL;
     
     do{
@@ -228,17 +251,17 @@ bool solicitaEmail( Dados *cliente ){
         }else{ 
             mensagemDeErro = validaEmail( cliente->email );
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
-            puts(mensagemDeErro[corredor] );}}
+                puts(mensagemDeErro[corredor]);}}
     }while( mensagemDeErro[0] != NULL);
     return true;
 }
 char **validaEmail( char *email  ){
-    ///incluir funcao de busca no banco de dados se o email já encontra-se cadastrado
     int tamanhoMin = 5;
     static char *mensagem[4] = {NULL};
     int erro = 0;
     const int quantidadeDominios = 5;
     char *dominios[] = { "@gmail.com", "@outlook.com", "@hotmail.com", "@live.com", "@yahoo.com" };
+    SITUACAO_DO_DADO EMAIL = NOVO;
     
     strcpy( email, (padronizaDado(email)));
     for( int caracter = 0; email[caracter] != '\0'; caracter++ ){
@@ -252,17 +275,24 @@ char **validaEmail( char *email  ){
                 mensagem[erro++] = "\t^ É necessário pelo menos 5 caracteres de endereço";}
             for( int dominio = 0; dominio < quantidadeDominios; dominio++ ){
                 if( (strcmp( &email[caracter], dominios[dominio] )) == 0 ){
-                    mensagem[erro++] = NULL; break;
+                    mensagem[erro] = NULL; break;
                 }else if( (dominio+1) == quantidadeDominios ){
                     mensagem[erro++] = "\t^ Dominio inválido";}}
             break;
         }else if( email[caracter+1] == '\0' ){
             mensagem[erro++] = "\t^ Email inválido";}}
+    
     mensagem[erro] = NULL;
+
+    if( mensagem[0] == NULL ){
+        EMAIL = consultaEmail( email );
+        if( EMAIL == CADASTRADO ){
+            mensagem[erro++] = "\t^ Email já cadastrado";
+            mensagem[erro] = NULL;}}
+   
     return mensagem;
 }
 bool solicitaSenha( Dados *cliente ){
-    char **validaSenha( char* );
     char **mensagemDeErro = NULL;
     
     do{
@@ -282,7 +312,7 @@ bool solicitaSenha( Dados *cliente ){
     }while( mensagemDeErro[0] != NULL );
     return true;
 }
-char **validaSenha( char *senha ){
+char **validaSenha( const char *senha ){
     static char *mensagem[4] = {NULL};
     int erro = 0; 
 
@@ -314,7 +344,6 @@ char **validaSenha( char *senha ){
     return mensagem;
 }
 bool solicitaTelefone( Dados *cliente ){
-    char **validaTelefone( char* );
     char **mensagemDeErro = NULL;
     
     do{
@@ -332,11 +361,13 @@ bool solicitaTelefone( Dados *cliente ){
             for( int corredor = 0; mensagemDeErro[corredor] != NULL; corredor++ ){
             puts(mensagemDeErro[corredor] );}}
     }while( mensagemDeErro[0] != NULL );
+    
     return true;
 }
-char **validaTelefone( char *telefone  ){
+char **validaTelefone( const char *telefone  ){
     static char *mensagem[4] = {NULL};
     int erro = 0; 
+    SITUACAO_DO_DADO TELEFONE = NOVO;
     ///incluir funcao de busca no banco de dados se o telefone já encontra-se cadastrado
 
     if( !(validaTamanho(telefone, TAMANHO_TELEFONE)) ){
@@ -351,10 +382,16 @@ char **validaTelefone( char *telefone  ){
         if( (isdigit(telefone[digito])) == 0 && telefone[digito] != '\n' && telefone[digito] != ' ' && telefone[digito] != '-'  ){
             mensagem[erro++] = "\t^ Utilize apenas números"; break;}}
     mensagem[erro] = NULL;
+
+    if( mensagem[0] == NULL ){
+        TELEFONE = consultaTelefone( telefone );
+        if( TELEFONE == CADASTRADO ){
+            mensagem[erro++] = "\t^ Telefone já cadastrado";
+            mensagem[erro] = NULL;}}
+    
     return mensagem;
 }
 bool solicitaRenda( Dados *cliente ){
-    char *validaRenda( char* );
     char *mensagemDeErro = NULL;
     
     do{
@@ -372,7 +409,7 @@ bool solicitaRenda( Dados *cliente ){
     }while( mensagemDeErro != NULL);
     return true;
 }
-char *validaRenda( char *renda ){
+char *validaRenda( const char *renda ){
     static char *erro = NULL;
 
     for( int digito = 0; renda[digito] != '\0'; digito++ ){
@@ -382,6 +419,61 @@ char *validaRenda( char *renda ){
         }else if( renda[digito+1] == '\0' ){ 
             erro = NULL;}}
     return erro;
+}
+bool consultaCpf( const char *cpf ){
+    FILE *clientesCadastrados = fopen( ARQUIVO_CADASTRO_CLIENTE, "r" ),
+         *dadosGerais = fopen( DADOS_ARQUIVO_CADASTRO, "r" );
+    
+    fscanf( dadosGerais, "%d", &quantidadeDeContas );
+        
+    for( int id = 0; id <= quantidadeDeContas; id++ ){
+        fseek( clientesCadastrados, id*sizeof(Dados), SEEK_SET);
+        fread( &cliente, sizeof(Dados), 1, clientesCadastrados);   
+        if( (strcmp( cpf, cliente.cpf)) == 0 ){
+        fclose(dadosGerais);
+        fclose(clientesCadastrados);
+        return true;}}
+
+    fclose(dadosGerais);
+    fclose(clientesCadastrados);
+    return false;
+}
+bool consultaEmail( const char *email ){
+    FILE *clientesCadastrados = fopen( ARQUIVO_CADASTRO_CLIENTE, "r" ),
+         *dadosGerais = fopen( DADOS_ARQUIVO_CADASTRO, "r" );
+    
+    fscanf( dadosGerais, "%d", &quantidadeDeContas );
+        
+    for( int id = 0; id <= quantidadeDeContas; id++ ){
+        fseek( clientesCadastrados, id*sizeof(Dados), SEEK_SET);
+        fread( &cliente, sizeof(Dados), 1, clientesCadastrados); 
+        
+        if( (strcmp( email, cliente.email)) == 0 ){
+            fclose(dadosGerais);
+            fclose(clientesCadastrados);
+            return true;}}
+
+    fclose(dadosGerais);
+    fclose(clientesCadastrados);
+    return false;
+}
+bool consultaTelefone( const char *telefone){
+    FILE *clientesCadastrados = fopen( ARQUIVO_CADASTRO_CLIENTE, "r" ),
+         *dadosGerais = fopen( DADOS_ARQUIVO_CADASTRO, "r" );
+    
+    fscanf( dadosGerais, "%d", &quantidadeDeContas );
+        
+    for( int id = 0; id <= quantidadeDeContas; id++ ){
+        fseek( clientesCadastrados, id*sizeof(Dados), SEEK_SET);
+        fread( &cliente, sizeof(Dados), 1, clientesCadastrados);   
+        if( (strcmp( telefone, cliente.telefone)) == 0 ){
+            fclose(dadosGerais);
+            fclose(clientesCadastrados);
+            return true;}}
+
+    fclose(dadosGerais);
+    fclose(clientesCadastrados);
+    return false;
 }
 #endif // CADASTRO_H_INCLUDED
 

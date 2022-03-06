@@ -51,7 +51,6 @@ int login( void ){
     }
 }
 char *solicitaCpfLogin( ){
-    char **validaCpfLogin( char* );
     char **mensagemDeErro = NULL;
     static char cpfTemp[TAMANHO_CPF] = { };
     
@@ -68,21 +67,6 @@ char *solicitaCpfLogin( ){
     }while( mensagemDeErro[0] != NULL );
 
     return cpfTemp;
-}
-char **validaCpfLogin( char *cpf ){
-    static char *mensagem[3] = {NULL};
-    int erro = 0; 
- 
-    if( !(validaTamanho(cpf, TAMANHO_CPF)) ){
-        mensagem[erro++] = "\t^ Dado incompleto"; }
-    if( !(cpf[3] == '.') || !(cpf[7] == '.') || !(cpf[11] == '-') ){
-        mensagem[erro++] = "\t^ Formato invalido!";}
-    for( int digito = 0; cpf[digito] != '\0'; digito++ ){
-        if( (isdigit( cpf[digito] )) == 0 && cpf[digito] != '.' && cpf[digito] != '-' ){
-            mensagem[erro++] = "\t^ Utilize apenas numeros!";
-            break;}}
-    mensagem[erro] = NULL;
-    return mensagem;
 }
 char *solicitaSenhaLogin(  ){
     static char senhaTemp[TAMANHO_SENHA] = { };

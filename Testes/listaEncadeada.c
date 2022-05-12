@@ -36,7 +36,7 @@ int main( ){
                 puts("\n");
                 break;
             case 'p':
-                pesquisarAlunos( primeiro );
+                pesquisarAluno( primeiro );
                 puts("\n");
                 break;
             case 'e':
@@ -49,7 +49,6 @@ int main( ){
                 break;
         } 
     }while( resposta[0] != '0' );
-
 }
 
 void inserirAluno( aluno **primeiro ){
@@ -85,10 +84,18 @@ void listarAlunos( aluno *primeiro ){
     }
 }
 void pesquisarAluno( aluno *primeiro ){
+    char alunoPesquisar[20];
     aluno *atual = primeiro;
-    aluno
+
+    printf( "\nDigite o nome: " );
+    fgets( alunoPesquisar, 20, stdin );
     
-    
+    while( atual != NULL ){
+        if( strcmp( atual->nome, alunoPesquisar ) == 0 ){
+            printf( "\nEncontrado\n" );
+            break;}
+        atual = atual->proximo;
+    }
 }
 void excluirAluno( aluno *primeiro ){
     char alunoExcluir[20];
@@ -103,8 +110,10 @@ void excluirAluno( aluno *primeiro ){
         atual = atual->proximo;}
 
     if( atualBackup == NULL ){
+        printf( "\nAluno excluido\n" );
         primeiro = atual->proximo;
     }else{
+        printf( "\nAluno excluido\n" );
         atualBackup->proximo = atual->proximo;}
     free( atual );
 }

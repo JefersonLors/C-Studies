@@ -1,3 +1,3 @@
-cd  contaBancária 
-gcc main.c -o main
-./main
+cd  Testes
+gcc listaEncadeada.c -o listaEncadeada
+./listaEncadeada

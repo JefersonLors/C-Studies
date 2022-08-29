@@ -1,0 +1,90 @@
+# depslib dependency file v1.0
+1661736372 source:e:\documentos\programação\c\programas em c\simuladorb3\main.c
+	"include/config.h"
+
+1661731579 e:\documentos\programação\c\programas em c\simuladorb3\includes\papeisconfig.h
+	"gerais.h"
+	"dadosConfig.h"
+
+1661537186 e:\documentos\programação\c\programas em c\simuladorb3\includes\gerais.h
+	<string.h>
+	<ctype.h>
+	<windows.h>
+
+1661731983 e:\documentos\programação\c\programas em c\simuladorb3\includes\dadosconfig.h
+
+1661534937 e:\documentos\programação\c\programas em c\simuladorb3\includes\vendaconfig.h
+	"ofertasConfig.h"
+	"carteiraConfig.h"
+
+1661731225 e:\documentos\programação\c\programas em c\simuladorb3\includes\ofertasconfig.h
+	<time.h>
+	<string.h>
+	"papeisConfig.h"
+
+1661534672 e:\documentos\programação\c\programas em c\simuladorb3\includes\carteiraconfig.h
+	"gerais.h"
+	"ofertasConfig.h"
+	"transacoesConfig.h"
+
+1661534905 e:\documentos\programação\c\programas em c\simuladorb3\includes\transacoesconfig.h
+	"ofertasConfig.h"
+	"carteiraConfig.h"
+	<time.h>
+
+1661534704 e:\documentos\programação\c\programas em c\simuladorb3\includes\compraconfig.h
+	"ofertasConfig.h"
+
+1661733626 e:\documentos\programação\c\programas em c\simuladorb3\includes\menus_interfaces.h
+	"compraConfig.h"
+	"carteiraConfig.h"
+	"ofertasConfig.h"
+	"gerais.h"
+
+1661735715 source:e:\documentos\programação\c\programas em c\simuladorb3\gerais.c
+	"includes/config.h"
+
+1661736126 source:e:\documentos\programação\c\programas em c\simuladorb3\carteiraconfig.c
+	"include/config.h"
+
+1661735504 e:\documentos\programação\c\programas em c\simuladorb3\includes\teste.h
+	<string.h>
+	<ctype.h>
+	<windows.h>
+	<stdlib.h>
+	<stdio.h>
+	<stdbool.h>
+	<locale.h>
+	<time.h>
+
+1661736745 source:e:\documentos\programação\c\programas em c\simuladorb3\compraconfig.c
+	"include/config.h"
+
+1661736745 source:e:\documentos\programação\c\programas em c\simuladorb3\dadosconfig.c
+	"include/config.h"
+
+1661736521 source:e:\documentos\programação\c\programas em c\simuladorb3\menus_interfaces.c
+	"include/config.h"
+
+1661736745 source:e:\documentos\programação\c\programas em c\simuladorb3\ofertasconfig.c
+	"include/config.h"
+
+1661736888 source:e:\documentos\programação\c\programas em c\simuladorb3\papeisconfig.c
+	"include/config.h"
+
+1661736745 source:e:\documentos\programação\c\programas em c\simuladorb3\transacoesconfig.c
+	"include/config.h"
+
+1661736745 source:e:\documentos\programação\c\programas em c\simuladorb3\vendaconfig.c
+	"include/config.h"
+
+1661737327 e:\documentos\programação\c\programas em c\simuladorb3\include\config.h
+	<string.h>
+	<ctype.h>
+	<windows.h>
+	<stdlib.h>
+	<stdio.h>
+	<stdbool.h>
+	<locale.h>
+	<time.h>
+
